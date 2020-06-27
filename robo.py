@@ -19,7 +19,7 @@ wiringpi.pwmSetMode(wiringpi.GPIO.PWM_MODE_MS)
 
 wiringpi.pwmSetClock(192)
 wiringpi.pwmSetRange(2000)
-wiringpi.pwmWrite(18, 150)
+wiringpi.pwmWrite(18, 75)
 
 
 # def signal_handler(sig, frame):
@@ -66,11 +66,14 @@ def set_light():
     else:
         GPIO.output(4, GPIO.HIGH)
 
+def set_camera(ms):
+    wiringpi.pwmWrite(18, ms)
+
 def set_cameraUp():
     wiringpi.pwmWrite(18, 250)
 
 def set_cameraDown():
-    wiringpi.pwmWrite(18, 50)
+    wiringpi.pwmWrite(18, 40)
 
 def set_cameraCenter():
     wiringpi.pwmWrite(18, 150)
@@ -126,7 +129,12 @@ def cameraDown():
 @app.route('/cameraCenter')
 def cameraCenter():
     set_cameraCenter()
-    return 'Hello set_cameraCenter'
+    return 'Hello set_cameraCenter'\
+
+@app.route('/cameraSet/<int:ms>')
+def cameraSet(ms):
+    set_camera(ms)
+    return 'Hello set_camera'
 
 
 if __name__ == '__main__':
