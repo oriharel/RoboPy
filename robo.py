@@ -5,6 +5,7 @@ from flask import Flask
 from flask import request
 from adafruit_motorkit import MotorKit
 import os
+from subprocess import call
 # import wiringpi
 # import sys
 
@@ -144,14 +145,23 @@ def stop():
 def speak():
     req_data = request.get_json()
     text = req_data['text']
-    tts = gtts.gTTS(text)
-    os.remove("text.mp3")
-    tts.save("text.mp3")
-    pygame.mixer.init()
-    pygame.mixer.music.load("text.mp3")
-    pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy():
-        continue
+    text = text.replace(' ', '_')
+    print('speaking ')
+    # tts = gtts.gTTS(text)
+    # os.remove("Text.wav")
+    test_text = 'espeak "Text you wish to hear back" 2>/dev/null'
+    cmd_beg = 'espeak '
+    cmd_end = ' | aplay /home/pi/Desktop/Text.wav  2>/dev/null'  # To play back the stored .wav file and to dump the std errors to /dev/null
+    cmd_end_2 = ' 2>/dev/null'  # To play back the stored .wav file and to dump the std errors to /dev/null
+    cmd_out = '--stdout > /home/pi/Desktop/Text.wav '  # To store the voice file
+    call([cmd_beg + text + cmd_end_2], shell=True)
+    # call([test_text], shell=True)
+    # tts.save("text.mp3")
+    # pygame.mixer.init()
+    # pygame.mixer.music.load("text.mp3")
+    # pygame.mixer.music.play()
+    # while pygame.mixer.music.get_busy():
+    #     continue
     return 'Hello speak'
 
 
